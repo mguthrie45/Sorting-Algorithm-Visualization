@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+	<head>
+		<title>Sort Visualization</title>
+	</head>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script src='https://kit.fontawesome.com/a076d05399.js'></script>
+	<body>
+		<div id = "black_line"></div>
+		<div id = "button_cont">
+			<div class = "sort_button" id = "refresh" onclick = "reset_data()">
+				<i style="font-size:24px" class="fa">&#xf021;</i>
+			</div>
+			<div class = "sort_button" onclick = "exec_selec_sort()">Select</div>
+			<div class = "sort_button" onclick = "exec_bubble_sort()">Bubble</div>
+			<div class = "sort_button" onclick = "exec_insert_sort()">Insertion</div>
+			<div class = "sort_button">Quick</div>
+			<div id = "size_container">
+				<div id = "label">
+					<span>Size</span>
+				</div><input type="text" value="90" id = "input"><div id="incr_cont">
+					<div class="incrementor" id="up" style="border-radius: 0 4px 0 0;" onclick="increment(5)">
+						<i class='fas fa-angle-up' style='font-size:18px; position: relative;'></i>
+					</div><div class="incrementor" id="down" style="border-radius: 0 0 4px 0;" onclick="decrement(5)">
+						<i class='fas fa-angle-down' style='font-size:18px; position: relative;'></i>
+					</div>
+				</div>
+			</div>
+		</div>
+		<canvas id="main" width="1288" height="600" style="border-bottom: 5px solid gray; background-color: white; display: block; margin-left: auto; margin-right: auto;"></canvas>
+	</body>
+	<script src="sorts.js"></script>
+</html>
