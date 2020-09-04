@@ -195,9 +195,10 @@ function List() {
 		function partition(array, low, high) {
 			var i = low - 1;
 			var pivot = array[high];
-			for (var j = 0; j < high; j++) {
+			for (var j = low; j < high; j++) {
 				var obj_frame = deep_copy(array);
 				anim_array.push(obj_frame);
+				console.log(j);
 				if (array[j].value < pivot.value) {
 					i++;
 					var temp = array[i];
@@ -208,14 +209,13 @@ function List() {
 			var temp2 = array[i+1];
 			array[i+1] = array[high];
 			array[high] = temp2;
-			var obj_frame = deep_copy(array);
+			//var obj_frame = deep_copy(array);
 			anim_array.push(obj_frame);
 			return i+1;
 		}
 		function recursive_quick(array, low, high) {
 			if (low < high) {
 				var p_ind = partition(array, low, high);
-				console.log(p_ind);
 				recursive_quick(array, low, p_ind-1);
 				recursive_quick(array, p_ind+1, high);
 			}
