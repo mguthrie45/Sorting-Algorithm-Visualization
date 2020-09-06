@@ -1,3 +1,11 @@
+//fix insertion sort animations
+//add color to quick sort
+
+
+
+
+
+
 var canvas = document.getElementById("main");
 var ctx = canvas.getContext("2d");
 
@@ -41,10 +49,10 @@ function SortButton(text, x, y) {
 	}
 }
 
-function Pillar(width, color) {
+function Pillar(width, color, value) {
 	this.width = width;
 	this.color = color;
-	this.value = Math.floor(Math.random()*HEIGHT);
+	this.value = value;
 
 	this.draw = function(canv, x) {
 		canv.fillStyle = this.color;
@@ -72,7 +80,7 @@ function List() {
 
 	this.init = function() {
 		for (var i = 0; i < this.n; i++) {
-			var pillar = new Pillar(bin_width, "cornflowerBlue");
+			var pillar = new Pillar(bin_width, "cornflowerBlue", Math.floor(Math.random()*HEIGHT));
 			this.array.push(pillar);
 		}
 	}
@@ -104,28 +112,24 @@ function List() {
 				return -1;
 			}
 			else {
+				var val = array[i].value;
+				var min_i = minIndex(array, i, N-1);
+				var min_val = array[min_i].value;
+				if (i < N-1) {
+					array[i] = new Pillar(bin_width, "orange", val);
+					array[min_i] = new Pillar(bin_width, "gray", min_val);
+				}
+
 				var obj_frame = deep_copy(array);
 				anim_array.push(obj_frame);
 
-				var min_i = minIndex(array, i, N-1);
-				array[min_i].color = "cornflowerBlue";
-				if (i+1 != min_i && i < array.length-1) {
-					array[i+1].color = "dodgerBlue";
-				}
-				array[i].color = "cornflowerBlue";
+				
+				array[i] = new Pillar(bin_width, "cornflowerBlue", val);
 				if (min_i != i) {
+					array[min_i] = new Pillar(bin_width, "cornflowerBlue", min_val)
 					var temp = array[i];
 					array[i] = array[min_i];
 					array[min_i] = temp;
-
-					/*var temp2 = obj_frame.array[i].value;
-					obj_frame.array[i].value = obj_frame.array[min_i].value;
-					obj_frame.array[min_i].value = temp2;*/
-				}
-				//anim_array.push([obj_frame, i]);
-				var min_i = minIndex(array, i+1, N-1);
-				if (array[min_i] != undefined){
-					array[min_i].color = "deepPink";
 				}
 			}
 			recursiveSort(array, i+1, canv);
@@ -142,16 +146,26 @@ function List() {
 				return "done";
 			}
 			pass = function(array, i,  j) {
+				if (j == array.length-i-1) {
+					var final_val = array[j].value;
+					array[j] = new Pillar(bin_width, "cornflowerBlue", final_val);
+					return "new pass";
+				}
+				var val1 = array[j].value;
+				var val2 = array[j+1].value;
+
+				array[j] = new Pillar(bin_width, "orange", val1);
+
 				var obj_frame = deep_copy(array);
 				anim_array.push(obj_frame);
 
-				if (j == array.length-i-1) {
-					return "new pass";
-				}
 				if (array[j].value > array[j+1].value) {
 					var temp = array[j];
 					array[j] = array[j+1];
 					array[j+1] = temp;
+				}
+				else {
+					array[j] = new Pillar(bin_width, "cornflowerBlue", val1);
 				}
 				pass(array, i, j+1);
 			}
@@ -160,6 +174,7 @@ function List() {
 		}
 		bub_sort(array, 0);
 		this.sorted = true;
+		console.log(anim_array);
 		return anim_array;
 	}
 
@@ -169,6 +184,8 @@ function List() {
 
 			var current = array[n-1];
 			var i = n-2;
+			var val = array[i].value;
+
 			while (i >= 0 && array[i].value > current.value) {
 				var obj_frame = deep_copy(array);
 				anim_array.push(obj_frame);
@@ -276,7 +293,7 @@ function exec_selec_sort() {
 function exec_insert_sort() {
 	if (list.sorted != true) {
 		var animation_insert = list.insertion_sort(list.array);
-		animate(animation_insert, 50*rel_fps_mult);
+		animate(animation_insert, 10*rel_fps_mult);
 	}
 	return "already sorted.";
 }
