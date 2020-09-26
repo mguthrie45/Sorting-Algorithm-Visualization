@@ -117,7 +117,7 @@ function List() {
 				var min_val = array[min_i].value;
 				if (i < N-1) {
 					array[i] = new Pillar(bin_width, "orange", val);
-					array[min_i] = new Pillar(bin_width, "gray", min_val);
+					array[min_i] = new Pillar(bin_width, "purple", min_val);
 				}
 
 				var obj_frame = deep_copy(array);
@@ -187,12 +187,21 @@ function List() {
 			var val = array[i].value;
 
 			while (i >= 0 && array[i].value > current.value) {
+				var i_val = array[i].value;
+				array[i] = new Pillar(bin_width, "orange", i_val);
+				var i1_val = array[i+1].value;
+				array[i+1] = new Pillar(bin_width, "purple", i1_val);
+
 				var obj_frame = deep_copy(array);
 				anim_array.push(obj_frame);
+				array[i] = new Pillar(bin_width, "cornflowerBlue", i_val);
+				array[i+1] = new Pillar(bin_width, "cornflowerBlue", i1_val);
 				array[i+1] = array[i];
 				i--;
 			}
 			array[i+1] = current;
+			var obj_frame = deep_copy(array);
+			anim_array.push(obj_frame);
 		}
 		recursive_insert = function(array, n=array.length) {
 			if (n <= 1) {
@@ -212,10 +221,19 @@ function List() {
 		function partition(array, low, high) {
 			var i = low - 1;
 			var pivot = array[high];
+
+			var pivot_val = array[high].value;
+			array[high] = new Pillar(bin_width, "purple", pivot_val);
+
 			for (var j = low; j < high; j++) {
+				var final_val = array[j].value;
+				array[j] = new Pillar(bin_width, "orange", final_val);
+
 				var obj_frame = deep_copy(array);
 				anim_array.push(obj_frame);
+				array[j] = new Pillar(bin_width, "cornflowerBlue", final_val);
 				console.log(j);
+
 				if (array[j].value < pivot.value) {
 					i++;
 					var temp = array[i];
@@ -223,11 +241,15 @@ function List() {
 					array[j] = temp;
 				}
 			}
+			array[high] = new Pillar(bin_width, "cornflowerBlue", pivot_val);
+
 			var temp2 = array[i+1];
 			array[i+1] = array[high];
 			array[high] = temp2;
-			//var obj_frame = deep_copy(array);
+
+			var obj_frame = deep_copy(array);
 			anim_array.push(obj_frame);
+
 			return i+1;
 		}
 		function recursive_quick(array, low, high) {
@@ -238,6 +260,7 @@ function List() {
 			}
 		}
 		recursive_quick(array, 0, array.length-1);
+		this.sorted = true;
 		return anim_array;
 	}
 }
@@ -293,7 +316,7 @@ function exec_selec_sort() {
 function exec_insert_sort() {
 	if (list.sorted != true) {
 		var animation_insert = list.insertion_sort(list.array);
-		animate(animation_insert, 10*rel_fps_mult);
+		animate(animation_insert, 40*rel_fps_mult);
 	}
 	return "already sorted.";
 }
