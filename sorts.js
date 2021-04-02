@@ -1,12 +1,12 @@
 var canvas = document.getElementById("main");
 var ctx = canvas.getContext("2d");
 
-const WIDTH = canvas.width
-const HEIGHT = canvas.height
+var WIDTH = canvas.width
+var HEIGHT = canvas.height
 
 var size_form = document.getElementById("input");
 var SIZE = size_form.value;
-const rel_fps_mult = SIZE/90; 
+var rel_fps_mult = SIZE/90; 
 const BUFFER = 2;
 
 function get_bin_width() {
