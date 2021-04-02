@@ -5,7 +5,10 @@ body, html {
 }
 
 canvas {
-  width: 80%;
+  width: 78.3%;
+  padding: 10px;
+  padding-bottom: 0;
+  min-width: 778px;
 }
 
 #button_cont {
@@ -16,9 +19,10 @@ canvas {
   display: block;
   margin-left: auto;
   margin-right: auto;
-  width: 80%;
+  width: 78.3%;
+  min-width: 778px;
   height: 50px;
-  margin-bottom: 3%;
+  margin-bottom: 0;
 }
 .sort_button {
   font-family: "Helvetica";

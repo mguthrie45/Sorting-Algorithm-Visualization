@@ -1,21 +1,14 @@
-//fix insertion sort animations
-//add color to quick sort
-
-
-
-
-
-
 var canvas = document.getElementById("main");
 var ctx = canvas.getContext("2d");
 
-var WIDTH = canvas.width
-var HEIGHT = canvas.height
+const WIDTH = canvas.width
+const HEIGHT = canvas.height
 
 var size_form = document.getElementById("input");
 var SIZE = size_form.value;
-var rel_fps_mult = SIZE/90; 
-var BUFFER = 2;
+const rel_fps_mult = SIZE/90; 
+const BUFFER = 2;
+
 function get_bin_width() {
 	return WIDTH/SIZE-BUFFER;
 }
