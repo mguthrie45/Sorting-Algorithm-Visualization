@@ -45,14 +45,15 @@ canvas {
   display: inline-block;
   background-color: #f0f0f0;
   width: 40px;
-  padding-top: 6px;
+  padding-top: 3px;
+  padding-bottom: 3px;
   height: 30px;
   color: black;
   margin-right: 15px;
   border: 2px solid black;
   border-radius: 6px;
 }
-#refresh:hover i {
+#refresh:hover svg {
   transition: 1s;
   transform: rotateZ(360deg);
 }
