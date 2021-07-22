@@ -1,7 +1,7 @@
-function Pillar(width, color) {
+function Pillar(width, color, value) {
 	this.width = width;
 	this.color = color;
-	this.value = Math.floor(Math.random()*HEIGHT);
+	this.value = value;
 
 	this.draw = function(canv, x) {
 		canv.fillStyle = this.color;
@@ -29,7 +29,7 @@ function List() {
 
 	this.init = function() {
 		for (var i = 0; i < this.n; i++) {
-			var pillar = new Pillar(bin_width, "cornflowerBlue");
+			var pillar = new Pillar(bin_width, "cornflowerBlue", Math.floor(Math.random()*HEIGHT));
 			this.array.push(pillar);
 		}
 	}
@@ -61,28 +61,24 @@ function List() {
 				return -1;
 			}
 			else {
+				var val = array[i].value;
+				var min_i = minIndex(array, i, N-1);
+				var min_val = array[min_i].value;
+				if (i < N-1) {
+					array[i] = new Pillar(bin_width, "orange", val);
+					array[min_i] = new Pillar(bin_width, "purple", min_val);
+				}
+
 				var obj_frame = deep_copy(array);
 				anim_array.push(obj_frame);
 
-				var min_i = minIndex(array, i, N-1);
-				array[min_i].color = "cornflowerBlue";
-				if (i+1 != min_i && i < array.length-1) {
-					array[i+1].color = "dodgerBlue";
-				}
-				array[i].color = "cornflowerBlue";
+				
+				array[i] = new Pillar(bin_width, "cornflowerBlue", val);
 				if (min_i != i) {
+					array[min_i] = new Pillar(bin_width, "cornflowerBlue", min_val)
 					var temp = array[i];
 					array[i] = array[min_i];
 					array[min_i] = temp;
-
-					/*var temp2 = obj_frame.array[i].value;
-					obj_frame.array[i].value = obj_frame.array[min_i].value;
-					obj_frame.array[min_i].value = temp2;*/
-				}
-				//anim_array.push([obj_frame, i]);
-				var min_i = minIndex(array, i+1, N-1);
-				if (array[min_i] != undefined){
-					array[min_i].color = "deepPink";
 				}
 			}
 			recursiveSort(array, i+1, canv);
@@ -99,16 +95,26 @@ function List() {
 				return "done";
 			}
 			pass = function(array, i,  j) {
+				if (j == array.length-i-1) {
+					var final_val = array[j].value;
+					array[j] = new Pillar(bin_width, "cornflowerBlue", final_val);
+					return "new pass";
+				}
+				var val1 = array[j].value;
+				var val2 = array[j+1].value;
+
+				array[j] = new Pillar(bin_width, "orange", val1);
+
 				var obj_frame = deep_copy(array);
 				anim_array.push(obj_frame);
 
-				if (j == array.length-i-1) {
-					return "new pass";
-				}
 				if (array[j].value > array[j+1].value) {
 					var temp = array[j];
 					array[j] = array[j+1];
 					array[j+1] = temp;
+				}
+				else {
+					array[j] = new Pillar(bin_width, "cornflowerBlue", val1);
 				}
 				pass(array, i, j+1);
 			}
@@ -117,6 +123,7 @@ function List() {
 		}
 		bub_sort(array, 0);
 		this.sorted = true;
+		console.log(anim_array);
 		return anim_array;
 	}
 
@@ -126,13 +133,24 @@ function List() {
 
 			var current = array[n-1];
 			var i = n-2;
+			var val = array[i].value;
+
 			while (i >= 0 && array[i].value > current.value) {
+				var i_val = array[i].value;
+				array[i] = new Pillar(bin_width, "orange", i_val);
+				var i1_val = array[i+1].value;
+				array[i+1] = new Pillar(bin_width, "purple", i1_val);
+
 				var obj_frame = deep_copy(array);
 				anim_array.push(obj_frame);
+				array[i] = new Pillar(bin_width, "cornflowerBlue", i_val);
+				array[i+1] = new Pillar(bin_width, "cornflowerBlue", i1_val);
 				array[i+1] = array[i];
 				i--;
 			}
 			array[i+1] = current;
+			var obj_frame = deep_copy(array);
+			anim_array.push(obj_frame);
 		}
 		recursive_insert = function(array, n=array.length) {
 			if (n <= 1) {
@@ -143,6 +161,54 @@ function List() {
 			place(array, n);
 		}
 		recursive_insert(array);
+		this.sorted = true;
+		return anim_array;
+	}
+
+	this.quick_sort = function(array) {
+		var anim_array = [];
+		function partition(array, low, high) {
+			var i = low - 1;
+			var pivot = array[high];
+
+			var pivot_val = array[high].value;
+			array[high] = new Pillar(bin_width, "purple", pivot_val);
+
+			for (var j = low; j < high; j++) {
+				var final_val = array[j].value;
+				array[j] = new Pillar(bin_width, "orange", final_val);
+
+				var obj_frame = deep_copy(array);
+				anim_array.push(obj_frame);
+				array[j] = new Pillar(bin_width, "cornflowerBlue", final_val);
+				console.log(j);
+
+				if (array[j].value < pivot.value) {
+					i++;
+					var temp = array[i];
+					array[i] = array[j];
+					array[j] = temp;
+				}
+			}
+			array[high] = new Pillar(bin_width, "cornflowerBlue", pivot_val);
+
+			var temp2 = array[i+1];
+			array[i+1] = array[high];
+			array[high] = temp2;
+
+			var obj_frame = deep_copy(array);
+			anim_array.push(obj_frame);
+
+			return i+1;
+		}
+		function recursive_quick(array, low, high) {
+			if (low < high) {
+				var p_ind = partition(array, low, high);
+				recursive_quick(array, low, p_ind-1);
+				recursive_quick(array, p_ind+1, high);
+			}
+		}
+		recursive_quick(array, 0, array.length-1);
 		this.sorted = true;
 		return anim_array;
 	}
@@ -158,3 +224,5 @@ function deep_copy(array) {
     lst.array = new_array;
     return lst;
 }
+
+export {Pillar, map, List, deep_copy};

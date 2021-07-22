@@ -4,9 +4,10 @@ var ctx = canvas.getContext("2d");
 var WIDTH = canvas.width
 var HEIGHT = canvas.height
 
-var size_form = document.getElementById("input");
+var size_form = document.getElementById("size-input");
 var SIZE = size_form.value;
-var rel_fps_mult = SIZE/90; 
+var speed_form = document.getElementById("speed-input");
+var rel_fps_mult = SIZE/90;
 const BUFFER = 2;
 
 function get_bin_width() {
@@ -116,13 +117,21 @@ function List() {
 				var obj_frame = deep_copy(array);
 				anim_array.push(obj_frame);
 
-				
-				array[i] = new Pillar(bin_width, "cornflowerBlue", val);
+
+				//array[i] = new Pillar(bin_width, "cornflowerBlue", val);
 				if (min_i != i) {
-					array[min_i] = new Pillar(bin_width, "cornflowerBlue", min_val)
 					var temp = array[i];
 					array[i] = array[min_i];
 					array[min_i] = temp;
+
+					var obj_frame = deep_copy(array);
+					anim_array.push(obj_frame);
+
+					array[i] = new Pillar(bin_width, "cornflowerBlue", min_val);
+					array[min_i] = new Pillar(bin_width, "cornflowerBlue", val);
+				}
+				else {
+					array[i] = new Pillar(bin_width, "cornflowerBlue", val);
 				}
 			}
 			recursiveSort(array, i+1, canv);
@@ -148,6 +157,7 @@ function List() {
 				var val2 = array[j+1].value;
 
 				array[j] = new Pillar(bin_width, "orange", val1);
+				array[j+1] = new Pillar(bin_width, "red", val2);
 
 				var obj_frame = deep_copy(array);
 				anim_array.push(obj_frame);
@@ -156,6 +166,11 @@ function List() {
 					var temp = array[j];
 					array[j] = array[j+1];
 					array[j+1] = temp;
+
+					var obj_frame = deep_copy(array);
+					anim_array.push(obj_frame);
+
+					array[j] = new Pillar(bin_width, "cornflowerBlue", val2);
 				}
 				else {
 					array[j] = new Pillar(bin_width, "cornflowerBlue", val1);
@@ -224,14 +239,28 @@ function List() {
 
 				var obj_frame = deep_copy(array);
 				anim_array.push(obj_frame);
-				array[j] = new Pillar(bin_width, "cornflowerBlue", final_val);
-				console.log(j);
 
 				if (array[j].value < pivot.value) {
 					i++;
+
+					var temp_val = array[i].value;
+					array[i] = new Pillar(bin_width, "red", temp_val);
+
+					var obj_frame = deep_copy(array);
+					anim_array.push(obj_frame);
+
 					var temp = array[i];
 					array[i] = array[j];
 					array[j] = temp;
+
+					var obj_frame = deep_copy(array);
+					anim_array.push(obj_frame);
+
+					array[j] = new Pillar(bin_width, "cornflowerBlue", temp_val);
+					array[i] = new Pillar(bin_width, "cornflowerBlue", final_val);
+				}
+				else {
+					array[j] = new Pillar(bin_width, "cornflowerBlue", final_val);
 				}
 			}
 			array[high] = new Pillar(bin_width, "cornflowerBlue", pivot_val);
@@ -256,6 +285,10 @@ function List() {
 		this.sorted = true;
 		return anim_array;
 	}
+
+	this.bucket_sort = function(array) {
+
+	}
 }
 
 function deep_copy(array) {
@@ -276,47 +309,54 @@ console.log(list.array);
 function reset_data() {
 	list.clear();
 	list.n = SIZE;
-	rel_fps_mult = SIZE/90; 
+	change_speed();
 	bin_width = get_bin_width();
 	list.init();
 	ctx.clearRect(0, 0, WIDTH, HEIGHT);
 	list.map_pillars(ctx);
 }
-function increment(step) {
+
+function change_size() {
+	SIZE = parseInt(size_form.value);
+	reset_data();
+}
+
+function increment_size(step) {
 	size_form.value = parseInt(size_form.value) + parseInt(step);
 	SIZE = parseInt(size_form.value);
 	reset_data();
 }
-function decrement(step) {
-	size_form.value -= step;
+
+function decrement_size(step) {
+	size_form.value = parseInt(size_form.value) - parseInt(step);
 	SIZE = parseInt(size_form.value);
 	reset_data();
 }
+
 function exec_bubble_sort() {
 	if (list.sorted != true) {
 		var animation_bubble = list.bubble_sort(list.array);
-		animate(animation_bubble, 130*rel_fps_mult);
+		animate(animation_bubble, 50*rel_fps_mult, false);
 	}
 	return "already sorted.";
 }
 function exec_selec_sort() {
 	if (list.sorted != true) {
 		var animation_selec = list.selec_sort(list.array, 0);
-		animate(animation_selec, 10*rel_fps_mult);
+		animate(animation_selec, 10*rel_fps_mult, false);
 	}
-	return "already sorted.";
 }
 function exec_insert_sort() {
 	if (list.sorted != true) {
 		var animation_insert = list.insertion_sort(list.array);
-		animate(animation_insert, 40*rel_fps_mult);
+		animate(animation_insert, 40*rel_fps_mult, false);
 	}
 	return "already sorted.";
 }
 function exec_quick_sort() {
 	if (list.sorted != true) {
 		var animation_quick = list.quick_sort(list.array);
-		animate(animation_quick, 40*rel_fps_mult);
+		animate(animation_quick, 40*rel_fps_mult, false);
 	}
 	return "already sorted.";
 }
@@ -333,17 +373,48 @@ function next_state(i, array, fps) {
 	}, (1000/fps)*i);
 }
 
-function animate(array, fps) {
+function animate(array, fps, reverse) {
 	console.log(fps);
 	for (var i = 0; i < array.length; i++) {
+		if (reverse) {
+			array.reverse();
+		}
 		next_state(i, array, fps);
 	}
 }
 
-(function initiate() {
+function change_speed() {
+	var m = parseInt(speed_form.value);
+	if (m > 100) {
+		speed_form.value = "100";
+		m = 100;
+	}
+	else if (m < 0) {
+		speed_form.value = "0";
+		m = 0;
+	}
+	rel_fps_mult = 0.2 + (m * m) * SIZE/(90*1600);
+}
+
+function increment_speed(step) {
+	if (speed_form.value == "100") {
+		return;
+	}
+	speed_form.value = parseInt(speed_form.value) + parseInt(step);
+	var m = speed_form.value;
+	rel_fps_mult = 0.2 + (m * m) * SIZE/(90*1600);
+}
+
+function decrement_speed(step) {
+	if (speed_form.value == "0") {
+		return;
+	}
+	speed_form.value = parseInt(speed_form.value) - parseInt(step);
+	var m = speed_form.value;
+	rel_fps_mult = 0.2 + (m * m) * SIZE/(90*1600);
+}
+
+(function init() {
 	ctx.clearRect(0, 0, WIDTH, HEIGHT);
 	list.map_pillars(ctx);
 })();
-
-
-

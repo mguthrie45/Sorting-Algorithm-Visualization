@@ -58,8 +58,8 @@ canvas {
   transform: rotateZ(360deg);
 }
 
-#size_container {
-  width: 200px;
+#size_container, #speed_container {
+  width: 157px;
   height: 40px;
   margin-left: 15px;
   display: inline-block;
