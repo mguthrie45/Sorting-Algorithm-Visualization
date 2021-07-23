@@ -202,9 +202,17 @@ function List() {
 
 				var obj_frame = deep_copy(array);
 				anim_array.push(obj_frame);
-				array[i] = new Pillar(bin_width, "cornflowerBlue", i_val);
-				array[i+1] = new Pillar(bin_width, "cornflowerBlue", i1_val);
+
+				var temp = array[i+1];
 				array[i+1] = array[i];
+				array[i] = temp;
+
+				var obj_frame = deep_copy(array);
+				anim_array.push(obj_frame);
+
+				array[i] = new Pillar(bin_width, "cornflowerBlue", i1_val);
+				array[i+1] = new Pillar(bin_width, "cornflowerBlue", i_val);
+
 				i--;
 			}
 			array[i+1] = current;
