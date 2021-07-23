@@ -1,22 +1,5 @@
-function Pillar(width, color, value) {
-	this.width = width;
-	this.color = color;
-	this.value = value;
-
-	this.draw = function(canv, x) {
-		canv.fillStyle = this.color;
-		canv.fillRect(x, HEIGHT-this.value, this.width, this.value);
-	}
-}
-
-function map(array, canv) {
-	for (i in array) {
-		array[i].draw(canv);
-	}
-}
-
 function List() {
-	this.n = SIZE;
+	this.n = size;
 	this.array = [];
 	this.x_values;
 	this.sorted = false;
@@ -29,7 +12,7 @@ function List() {
 
 	this.init = function() {
 		for (var i = 0; i < this.n; i++) {
-			var pillar = new Pillar(bin_width, "cornflowerBlue", Math.floor(Math.random()*HEIGHT));
+			var pillar = new Pillar(bin_width, "cornflowerBlue", Math.floor(Math.random() * HEIGHT));
 			this.array.push(pillar);
 		}
 	}
@@ -72,13 +55,21 @@ function List() {
 				var obj_frame = deep_copy(array);
 				anim_array.push(obj_frame);
 
-				
-				array[i] = new Pillar(bin_width, "cornflowerBlue", val);
+
+				//array[i] = new Pillar(bin_width, "cornflowerBlue", val);
 				if (min_i != i) {
-					array[min_i] = new Pillar(bin_width, "cornflowerBlue", min_val)
 					var temp = array[i];
 					array[i] = array[min_i];
 					array[min_i] = temp;
+
+					var obj_frame = deep_copy(array);
+					anim_array.push(obj_frame);
+
+					array[i] = new Pillar(bin_width, "cornflowerBlue", min_val);
+					array[min_i] = new Pillar(bin_width, "cornflowerBlue", val);
+				}
+				else {
+					array[i] = new Pillar(bin_width, "cornflowerBlue", val);
 				}
 			}
 			recursiveSort(array, i+1, canv);
@@ -104,6 +95,7 @@ function List() {
 				var val2 = array[j+1].value;
 
 				array[j] = new Pillar(bin_width, "orange", val1);
+				array[j+1] = new Pillar(bin_width, "red", val2);
 
 				var obj_frame = deep_copy(array);
 				anim_array.push(obj_frame);
@@ -112,6 +104,11 @@ function List() {
 					var temp = array[j];
 					array[j] = array[j+1];
 					array[j+1] = temp;
+
+					var obj_frame = deep_copy(array);
+					anim_array.push(obj_frame);
+
+					array[j] = new Pillar(bin_width, "cornflowerBlue", val2);
 				}
 				else {
 					array[j] = new Pillar(bin_width, "cornflowerBlue", val1);
@@ -143,9 +140,17 @@ function List() {
 
 				var obj_frame = deep_copy(array);
 				anim_array.push(obj_frame);
-				array[i] = new Pillar(bin_width, "cornflowerBlue", i_val);
-				array[i+1] = new Pillar(bin_width, "cornflowerBlue", i1_val);
+
+				var temp = array[i+1];
 				array[i+1] = array[i];
+				array[i] = temp;
+
+				var obj_frame = deep_copy(array);
+				anim_array.push(obj_frame);
+
+				array[i] = new Pillar(bin_width, "cornflowerBlue", i1_val);
+				array[i+1] = new Pillar(bin_width, "cornflowerBlue", i_val);
+
 				i--;
 			}
 			array[i+1] = current;
@@ -180,14 +185,28 @@ function List() {
 
 				var obj_frame = deep_copy(array);
 				anim_array.push(obj_frame);
-				array[j] = new Pillar(bin_width, "cornflowerBlue", final_val);
-				console.log(j);
 
 				if (array[j].value < pivot.value) {
 					i++;
+
+					var temp_val = array[i].value;
+					array[i] = new Pillar(bin_width, "red", temp_val);
+
+					var obj_frame = deep_copy(array);
+					anim_array.push(obj_frame);
+
 					var temp = array[i];
 					array[i] = array[j];
 					array[j] = temp;
+
+					var obj_frame = deep_copy(array);
+					anim_array.push(obj_frame);
+
+					array[j] = new Pillar(bin_width, "cornflowerBlue", temp_val);
+					array[i] = new Pillar(bin_width, "cornflowerBlue", final_val);
+				}
+				else {
+					array[j] = new Pillar(bin_width, "cornflowerBlue", final_val);
 				}
 			}
 			array[high] = new Pillar(bin_width, "cornflowerBlue", pivot_val);
@@ -212,6 +231,10 @@ function List() {
 		this.sorted = true;
 		return anim_array;
 	}
+
+	this.bucket_sort = function(array) {
+
+	}
 }
 
 function deep_copy(array) {
@@ -224,5 +247,3 @@ function deep_copy(array) {
     lst.array = new_array;
     return lst;
 }
-
-export {Pillar, map, List, deep_copy};
